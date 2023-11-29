@@ -26,8 +26,6 @@ def callback_query(call):
         response = requests.get('http://localhost:5000/close_lock')
         bot.answer_callback_query(call.id, 'La cerradura se ha cerrado')
     elif call.data == 'photo':
-        #print(call.message.chat.id)
-        #return
         #tomar foto
         subprocess.run(["termux-camera-photo","-c", "1","foto.jpg"])
         
