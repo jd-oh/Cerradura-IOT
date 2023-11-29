@@ -29,3 +29,4 @@ def callback_query(call):
         bot.answer_callback_query(call.id, 'Foto tomada')
 
 bot.polling()
+
