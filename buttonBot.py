@@ -1,5 +1,6 @@
 import telebot
 import requests
+import subprocess
 
 BOT_TOKEN = '6965114657:AAEg9K0K2xYrrz_M3y4P3TXktaPRcLyTGO0'  
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -25,7 +26,14 @@ def callback_query(call):
         response = requests.get('http://localhost:5000/close_lock')
         bot.answer_callback_query(call.id, 'La cerradura se ha cerrado')
     elif call.data == 'photo':
-        response = requests.get('http://localhost:5000/photo')
-        bot.answer_callback_query(call.id, 'Foto tomada')
+        #print(call.message.chat.id)
+        #return
+        subprocess.run(["termux-camera-photo","-c", "1","foto.jpg"])
+        subprocess.run(["mogrify" ,"-quality" ,"60","foto.jpg"])
+        bot.send_photo(call.message.chat.id, photo=open('foto.jpg', 'rb'))
+        bot.answer_callback_query(call.id, 'Se ha enviado la foto')
+        #return "enviado"
+        #response = requests.get('http://localhost:5000/photo')
+        #bot.answer_callback_query(call.id, 'Foto tomada')
 
 bot.polling()
