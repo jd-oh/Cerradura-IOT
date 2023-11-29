@@ -28,8 +28,12 @@ def callback_query(call):
     elif call.data == 'photo':
         #print(call.message.chat.id)
         #return
+        #tomar foto
         subprocess.run(["termux-camera-photo","-c", "1","foto.jpg"])
+        
+        #reducir tamaño
         subprocess.run(["mogrify" ,"-quality" ,"60","foto.jpg"])
+        
         bot.send_photo(call.message.chat.id, photo=open('foto.jpg', 'rb'))
         bot.answer_callback_query(call.id, 'Se ha enviado la foto')
         #return "enviado"
