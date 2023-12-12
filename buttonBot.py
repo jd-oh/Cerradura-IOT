@@ -12,9 +12,14 @@ bot = telebot.TeleBot(BOT_TOKEN)
 
 # Crear un cliente MQTT
 cliente = mqtt.Client()
-
+username="JuanDavid"
+password="prueba"
+#broker = "91.121.93.94"
+broker= "192.168.43.13"
+cliente.username_pw_set(username, password)
 # Conectar el cliente MQTT al broker
-cliente.connect('91.121.93.94', 1883, 60)
+cliente.connect(broker, 1883, 60)
+#
 
 # Iniciar el loop del cliente MQTT para procesar los mensajes y mantener la conexión
 cliente.loop_start()
@@ -23,7 +28,7 @@ cliente.loop_start()
 topic="CERRADURAIOT/CONFIG"
 
 # Manejador para el comando /iniciar
-@bot.message_handler(commands=['iniciar'])
+@bot.message_handler(commands=['menu'])
 def send_welcome(message):
     # Crear un teclado inline con botones para abrir y cerrar la cerradura, y tomar una foto
     keyboard = telebot.types.InlineKeyboardMarkup()
@@ -41,7 +46,7 @@ def send_help(message):
     # Definir el texto de ayuda
     help_text = """
     Aquí están los comandos que puedes usar:
-    - /iniciar: Inicia la interacción con el bot. Te muestra un menú con las opciones disponibles.
+    - /menu: Te muestra un menú con las opciones disponibles.
     - /tiempoParaAlertar <segundos>: Cambia el tiempo después del cual se envían las alertas cuando la cerradura está abierta.
     - /tiempoEntreAlertas <segundos>: Cambia el intervalo de tiempo entre las alertas.
     """
@@ -80,6 +85,10 @@ def callback_query(call):
 # Manejador para el comando /tiempoParaAlertar
 @bot.message_handler(commands=['tiempoParaAlertar'])
 def set_alert_delay(message):
+    # Verificar que el usuario haya ingresado un valor
+    if(len(message.text.split())<2):
+        bot.reply_to(message, 'Por favor ingresa un valor en segundos')
+        return
     # El primer argumento del mensaje es el comando, el segundo es el valor
     _, value = message.text.split()
     # Publicar el nuevo valor en el topic de configuración 
@@ -90,6 +99,10 @@ def set_alert_delay(message):
 # Manejador para el comando /tiempoEntreAlertas
 @bot.message_handler(commands=['tiempoEntreAlertas'])
 def set_alert_interval(message):
+    # Verificar que el usuario haya ingresado un valor
+    if(len(message.text.split())<2):
+        bot.reply_to(message, 'Por favor ingresa un valor en segundos')
+        return
     # El primer argumento del mensaje es el comando, el segundo es el valor
     _, value = message.text.split()
     # Publicar el nuevo valor en el topic de configuración
