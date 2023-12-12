@@ -1,0 +1,61 @@
+#include <WiFi.h>
+#include <FS.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <ArduinoJson.h>
+
+const char* ssid = "SinCobertura";
+const char* password =  "omicolta";
+
+const int openLed = 4;
+const int closeLed = 5;
+
+AsyncWebServer server(80);
+
+void setup() {
+  Serial.begin(115200);
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Conectando a WiFi...");
+    WiFi.begin(ssid, password);
+  }
+
+  Serial.println("Conectado a la red WiFi");
+  Serial.print("Dirección IP: ");
+  Serial.println(WiFi.localIP());
+
+  pinMode(openLed, OUTPUT);
+  pinMode(closeLed, OUTPUT);
+
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    // Verificar si el parámetro de consulta 'action' está presente
+    if (request->hasParam("action")) {
+      String action = request->getParam("action")->value();
+      
+      if (action.equals("abrir")) {
+        digitalWrite(openLed, HIGH);
+        digitalWrite(closeLed, LOW);
+        Serial.println("Puerta abierta");
+        request->send(200, "text/plain", "LED encendido");
+      } else if (action.equals("cerrar")) {
+        digitalWrite(openLed, LOW);
+        digitalWrite(closeLed, HIGH);
+        Serial.println("Puerta cerrada");
+        request->send(200, "text/plain", "LED apagado");
+      } else {
+        request->send(400, "text/plain", "Acción no válida");
+      }
+    } else {
+      request->send(400, "text/plain", "Parámetro de consulta 'action' no encontrado");
+    }
+  });
+
+  server.begin();
+}
+
+void loop() {
+  // Puedes agregar código aquí si es necesario
+}
