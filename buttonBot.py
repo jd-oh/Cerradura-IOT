@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 
 # Token del bot de Telegram
 BOT_TOKEN = '6965114657:AAEg9K0K2xYrrz_M3y4P3TXktaPRcLyTGO0'  
-
+URL = "https://appraisal-indication-battery-strap.trycloudflare.com/"
 # Crear una instancia del bot de Telegram
 bot = telebot.TeleBot(BOT_TOKEN)
 
@@ -15,7 +15,7 @@ cliente = mqtt.Client()
 username="JuanDavid"
 password="prueba"
 #broker = "91.121.93.94"
-broker= "192.168.43.13"
+broker= "192.168.43.252"
 cliente.username_pw_set(username, password)
 # Conectar el cliente MQTT al broker
 cliente.connect(broker, 1883, 60)
@@ -63,6 +63,7 @@ def callback_query(call):
             bot.answer_callback_query(call.id, 'La cerradura ya está abierta')
         else:
             response = requests.get('http://localhost:5000/open_lock')
+            response = requests.get(URL+"abrir")
             bot.answer_callback_query(call.id, 'La cerradura se ha abierto')
     elif call.data == 'close_lock':
         # Verificar si la cerradura ya está cerrada
@@ -71,6 +72,7 @@ def callback_query(call):
             bot.answer_callback_query(call.id, 'La cerradura ya está cerrada')
         else:
             response = requests.get('http://localhost:5000/close_lock')
+            response = requests.get(URL+"cerrar")
             bot.answer_callback_query(call.id, 'La cerradura se ha cerrado')
     elif call.data == 'photo':
         # Tomar una foto y enviarla

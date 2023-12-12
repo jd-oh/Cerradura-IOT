@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
     # Configuración del cliente MQTT
     #broker = "91.121.93.94"
-    broker = "192.168.43.13"
+    broker = "192.168.43.252"
     port = 1883
     topic = "CERRADURAIOT"
     topic_alertas = "CERRADURAIOT/ALERTAS"
